@@ -46,23 +46,21 @@ namespace find_rco {
         /// <param name="path">The path where to copy to.</param>
         /// <param name="writer">The StreamWriter to write into the output text file.</param>
         private static void SearchRecursive(string _path, string path, StreamWriter writer) {
-            foreach (string found in Directory.GetDirectories(_path)) {
-                foreach (string rco in Directory.GetFiles(found, "*.rco")) {
-                    counter++;
-                    writer.WriteLine(rco);
-                    if (!File.Exists(path + rco.GetName())) File.Copy(rco, path + rco.GetName());
-                    else {
-                        int count = 0;
-                        while (true) {
-                            if (!File.Exists(path + rco.GetName() + "_" + count.ToString())) {
-                                File.Copy(rco, path + rco.GetName() + "_" + count.ToString());
-                                break;
-                            } else count++;
-                        }
+            foreach (string rco in Directory.GetFiles(_path, "*.rco")) {
+                counter++;
+                writer.WriteLine(rco);
+                if (!File.Exists(path + rco.GetName())) File.Copy(rco, path + rco.GetName());
+                else {
+                    int count = 0;
+                    while (true) {
+                        if (!File.Exists(path + rco.GetName() + "_" + count.ToString())) {
+                            File.Copy(rco, path + rco.GetName() + "_" + count.ToString());
+                            break;
+                        } else count++;
                     }
                 }
-                SearchRecursive(found, path, writer);
-            }            
+            }
+            foreach (string subDir in Directory.GetDirectories(_path)) { SearchRecursive(subDir, path, writer); }            
         }
 
         /// <summary>
